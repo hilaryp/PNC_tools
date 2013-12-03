@@ -6,7 +6,7 @@ This repository contains various scripts for working with Philadelphia Neighborh
 ## plt2csv.py
 
 This script takes a Plotnik file (.plt or .pll) created by FAVE-extract and converts it to a .csv file. All plotnik codes
-are translated into more user-friendly labels. 
+are translated into more user-friendly labels. Original code by [Kyle Gorman](https://github.com/kylebgorman). @kylebgorman
 
 ### Usage
 Single file:
