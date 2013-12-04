@@ -98,14 +98,18 @@ def plt2csv(source, sink, subject):
         row['F1'] = F1
         row['F2'] = F2
         row['F3'] = F3
-        # separate word + plotnik junk out from vowel trajectories
-        # this is ugly, but number of fields in `wp` is not constant:
-        # `wp` contains "WORD {optional glide code} /nFormants/ timestamp <trajectory>"
-        (w, vt) = wp.split('<', 1)
-        row['Word'] = w.split(None)[0]
-        (row['F1_20'], row['F2_20'], row['F1_35'], row['F2_35'], 
-        row['F1_50'], row['F2_50'], row['F1_65'], row['F2_65'], 
-        row['F1_80'], row['F2_80']) = vt.rstrip('>').split(',')
+        # backwards compatibility for old FAVE-extract files
+        if wp[-1] == '>':
+            # separate word + plotnik junk out from vowel trajectories
+            # this is ugly, but number of fields in `wp` is not constant:
+            # `wp` contains "WORD {optional glide code} /nFormants/ timestamp <trajectory>"
+            (w, vt) = wp.split('<', 1)
+            row['Word'] = w.split(None)[0]
+            (row['F1_20'], row['F2_20'], row['F1_35'], row['F2_35'],
+            row['F1_50'], row['F2_50'], row['F1_65'], row['F2_65'],
+            row['F1_80'], row['F2_80']) = vt.rstrip('>').split(',')
+        else:
+            row['Word'] = wp.split(None)[0] # no extra measurements in old files
         # bizarrely, stress and duration are coded in the same column
         (s, d) = sd.split('.', 2)
         row['Stress'] = s
