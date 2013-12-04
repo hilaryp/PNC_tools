@@ -17,6 +17,10 @@ Or to concatenate all your .plt files into one .csv:
 
     python plt2csv.py input/*.plt > output.csv
 
+Use `-d` to include columns for the demographic information given in the .plt header line. Only recommended if using your own files; existing PNC file headers are often inconsistent.
+
+    python plt2csv.py -d input/*.plt > output.csv
+
 ### Output
 `plt2csv.py` is currently written for use with PNC-style filenames, but can easily be modified as needed. The input filename is parsed to return Subject ID as the first column. An example:
     
@@ -26,4 +30,3 @@ Or to concatenate all your .plt files into one .csv:
     PH13-1-1,Hilary P,772.8,1277.2,3561.1,ONE,1,130,uh,nasal,alveolar,voiced,glide,<n.a.>,795.0,1191.0,772.0,1284.0,768.0,1378.0,767.0,1462.0,740.0,1599.0
     PH13-1-1,Hilary P,468.7,2008.6,2505.0,TWO,1,200,Tuw,<n.a.>,<n.a.>,<n.a.>,oral alveolar,<n.a.>,439.0,1972.0,430.0,1892.0,420.0,1820.0,419.0,1697.0,422.0,1583.0
 
-The output .csv does not currently include the demographic information given in the .plt header line. In the event you wish to use that information, comment out lines 87 and 128-134, then uncomment lines 90-92 and 137-143. 
