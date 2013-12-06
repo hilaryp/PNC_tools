@@ -36,7 +36,8 @@
 #
 # 2013-12-2 update: added handling for FAVE's new multiple measurement
 # output. New columns for F1 and F2 at 20, 35, 50, 65, and 80%. Also
-# updated subject name regex to accommodate non PH-series data. -HEP
+# updated subject name regex to accommodate non PH-series data. Updates
+# after this are reflected in git commit history. -HEP
 
 from __future__ import with_statement  # Python 2.5 compatibility
 
@@ -51,6 +52,7 @@ NAN = float('nan')
 USAGE = 'USAGE: {} < PLT > CSV'.format(__file__)
 DELIMITER = ','
 SUBJECT = r'^\w\w\w?\d?\d?-\w?\d?\d?-\d?\d?\w?'
+# works for PH- IHP- and PHI-series files
 
 VCLASSES = {1: 'i', 2: 'e', 3: 'ae', 5: 'o', 6: 'uh', 7: 'u', 11: 'iy',
             12: 'iyF', 14: 'iyr', 21: 'ey', 22: 'eyF', 24: 'eyr',
@@ -132,6 +134,7 @@ def plt2csv(source, sink, subject):
 
 
 if __name__ == '__main__':
+    # command line option to include demographic info given in plt header
     demographics = False
     try:
         (opts, args) = getopt(argv[1:], 'd')
