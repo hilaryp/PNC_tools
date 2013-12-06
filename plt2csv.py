@@ -70,7 +70,8 @@ PRE_SEGS = {0: '<n.a.>', 1: 'oral labial', 2: 'm', 3: 'oral alveolar',
             8: 'obstruent-liquid', 9: 'glide'}
 # changed: "nasal labial" to "m" (it's the only one), "apical" to "oral
 # alveolar" (as [n] is not included), "nasal apical" to "n" (it's the only
-# one), "palatal" to "alveopalatal" (that's what it is), "obstruent liquid"# to "obstruent-liquid" (to make it clear that's a sequence we're talking
+# one), "palatal" to "alveopalatal" (that's what it is), "obstruent liquid"
+# to "obstruent-liquid" (to make it clear that's a sequence we're talking
 # about), and "w/y" to "glide" --KBG
 FOL_SEQS = {0: '<n.a.>', 1: '1.fol.syl', 2: '2.fol.syl', 3: 'complex',
             4: '1.fol.syl.complex', 5: '2.fol.syl.complex'}
@@ -85,10 +86,13 @@ def plt2csv(source, sink, subject):
     """
     # first line of header
     (s, a, x, e, c, n, y) = source.readline().rstrip().split(DELIMITER)
+    
+    row = {'Subject': subject, 'Speaker': s.strip()}
 
-    row = {'Subject': subject, 'Speaker': s.strip(), 'Age': a, 'Sex': x,
-          'Ethnicity': e, 'Schooling': c if c != '' else NAN,
-          'Neighborhood': n, 'Year': y}
+    if demographics:
+        row = {'Subject': subject, 'Speaker': s.strip(), 'Age': a, 'Sex': x, 
+               'Ethnicity': e, 'Schooling': c if c != '' else NAN, 
+               'Neighborhood': n, 'Year': y}
 
     # tells us where "summary" begins
     n_rows = int(source.readline().split(',')[0])
@@ -101,7 +105,7 @@ def plt2csv(source, sink, subject):
         if wp[-1] == '>':
             # separate word + plotnik junk out from vowel trajectories
             # this is ugly, but number of fields in `wp` is not constant:
-            # `wp` contains "WORD {optional glide code} /nFormants/ timestamp <trajectory>"
+            # "WORD {opt glide code} /nFormants/ timestamp <trajectory>"
             (w, vt) = wp.split('<', 1)
             row['Word'] = w.split(None)[0]
             (row['F1_20'], row['F2_20'], row['F1_35'], row['F2_35'],
@@ -149,7 +153,8 @@ if __name__ == '__main__':
                        'PreSeg', 'FolSeq', 'F1_20', 'F2_20',
                        'F1_35', 'F2_35', 'F1_50', 'F2_50',
                        'F1_65', 'F2_65', 'F1_80', 'F2_80']
-    sink = DictWriter(stdout, fieldnames=fields_IDs + fields_demographics + fields_measures)
+    sink = DictWriter(stdout, fieldnames=fields_IDs + fields_demographics + 
+                      fields_measures)
     sink.writeheader()
     # run it
     for fname in args:
