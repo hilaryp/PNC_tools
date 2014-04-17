@@ -161,9 +161,10 @@ if __name__ == '__main__':
     sink.writeheader()
     # run it
     for fname in args:
-        m = match(SUBJECT, path.split(fname)[1])
-        if m == None:
-            exit('Malformed argument: "' + fname + '"')
-        subject = m.group(0)
+        try:
+            subject = match(SUBJECT, path.split(fname)[1]).group(0)
+        # If filename isn't PNC-style, default to subject = filename
+        except AttributeError:
+            subject = path.splitext(path.split(fname)[1])[0]
         with open(fname, 'rU') as source:
             plt2csv(source, sink, subject)
