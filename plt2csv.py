@@ -51,7 +51,7 @@ from getopt import getopt, GetoptError
 NAN = float('nan')
 USAGE = 'USAGE: {} < PLT > CSV'.format(__file__)
 DELIMITER = ','
-SUBJECT = r'^\w\w\w?\d?\d?-\w?\d?\d?-\d?\d?\w?'
+SUBJECT = r'^\D\D\D?\d?\d?-\D?\d?\d?-\d\d?'
 # works for PH- IHP- and PHI-series files
 
 VCLASSES = {1: 'i', 2: 'e', 3: 'ae', 5: 'o', 6: 'uh', 7: 'u', 11: 'iy',
@@ -166,5 +166,6 @@ if __name__ == '__main__':
         # If filename isn't PNC-style, default to subject = filename
         except AttributeError:
             subject = path.splitext(path.split(fname)[1])[0]
-        with open(fname, 'rU') as source:
-            plt2csv(source, sink, subject)
+        finally:
+            with open(fname, 'rU') as source:
+                plt2csv(source, sink, subject)
