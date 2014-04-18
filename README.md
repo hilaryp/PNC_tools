@@ -45,18 +45,20 @@ in batch mode, which by default extracts the first tier.
 
 ### Usage
 There are two modes specified by option flags.
-Get tiers:
+
+(1) Get tiers:
 
     python fixtiers.py -g inputlist.txt > tiers.txt
 
-Fix tiers:
+(2) Fix tiers:
     
     python fixtiers.py -f inputlist.txt newtiers.txt outputlist.txt
 
 The get-tiers mode takes as its input a list of textgrid files and outputs a 
 list of each file's tiers. The user can then manually reorder these tiers in 
-the text file and save the new order for input to the second mode. The 
-fix-tiers mode takes as its input (1) the list of textgrid files, (2) the 
+the text file and save the new order for input to the fix-tiers mode. 
+
+The fix-tiers mode takes as its input (1) the list of textgrid files, (2) the 
 list of new tier orders, (3) a list of output filenames, and outputs new 
 textgrids with the specified tier order and filename. 
 
