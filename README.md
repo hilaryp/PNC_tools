@@ -1,12 +1,15 @@
 PNC\_tools
 =========
 
-This repository contains various scripts for working with Philadelphia Neighborhood Corpus (PNC) data. 
+This repository contains various scripts for working with Philadelphia 
+Neighborhood Corpus (PNC) data. 
 
 ## plt2csv.py
 
-This script takes a Plotnik file (.plt or .pll) created by FAVE-extract and converts it to a .csv file. All plotnik codes
-are translated into more user-friendly labels. Original code by [Kyle Gorman](https://github.com/kylebgorman). 
+This script takes a Plotnik file (.plt or .pll) created by FAVE-extract and 
+converts it to a .csv file. All plotnik codes are translated into more 
+user-friendly labels. Original code by 
+[Kyle Gorman](https://github.com/kylebgorman). 
 
 ### Usage
 Single file:
@@ -17,12 +20,16 @@ Or to concatenate all your .plt files into one .csv:
 
     python plt2csv.py input/*.plt > output.csv
 
-Use `-d` to include columns for the demographic information given in the .plt header line. Only recommended if using your own files; existing PNC file headers are often inconsistent.
+Use `-d` to include columns for the demographic information given in the .plt 
+header line. Only recommended if using your own files; existing PNC file 
+headers are often inconsistent.
 
     python plt2csv.py -d input/*.plt > output.csv
 
 ### Output
-`plt2csv.py` is currently written for use with PNC-style filenames, but can easily be modified as needed. The input filename is parsed to return Subject ID as the first column. An example:
+If the input filename follows the PNC format, it is parsed to return Subject 
+ID as the first column. Otherwise Subject ID defaults to the filename, 
+stripped of path and extension. An example:
     
     File: PH13-1-1-HilaryP-rx.plt
 
