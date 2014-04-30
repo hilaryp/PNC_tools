@@ -164,7 +164,7 @@ if __name__ == '__main__':
         try:
             subject = match(SUBJECT, path.split(fname)[1]).group(0)
         # If filename isn't PNC-style, default to subject = filename
-        except AttributeError:
+        except:
             subject = path.splitext(path.split(fname)[1])[0]
         finally:
             with open(fname, 'rU') as source:
