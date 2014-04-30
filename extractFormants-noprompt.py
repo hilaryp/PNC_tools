@@ -853,20 +853,13 @@ def readPNCdata(speakername, speakernum, fileStem):
     IHPSUBJECT = r'^\D\D\D\d-\d\d?\d?'
     PNC_dict = {}
 
-    #m = match(SUBJECT, path.split(fileStem)[1])
-    #if m == None:
-    #        exit('Malformed argument: "' + fname + '"' + ' regex match failed.')
-    #subject = m.group(0)
-
     try:
         subject = match(IHPSUBJECT, path.split(fileStem)[1]).group(0)
     except:
         try:            
             m = match(PNCSUBJECT, path.split(fileStem)[1]).group(0)
         except:
-            #exit('Unrecognized filename: "' + fname + '"' + ' regex subject match failed.')
             subject = fileStem
-            print fileStem
 
     with open(datafile, 'rU') as source:
         for row in DictReader(source):
@@ -884,7 +877,7 @@ def readPNCdata(speakername, speakernum, fileStem):
             speaker.sex = PNC_dict[subject]['Sex']
             speaker.age = PNC_dict[subject]['Age']
             speaker.ethnicity = PNC_dict[subject]['Ethnicity']
-            speaker.location = PNC_dict[subject]['Nbrhood']
+            speaker.location = PNC_dict[subject]['Location']
             speaker.year = PNC_dict[subject]['Year']
             speaker.years_of_schooling = PNC_dict[subject]['YearsOfSchool']
             speaker.tiernum = speakernum * \
