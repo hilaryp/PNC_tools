@@ -51,8 +51,10 @@ from getopt import getopt, GetoptError
 NAN = float('nan')
 USAGE = 'USAGE: {} < PLT > CSV'.format(__file__)
 DELIMITER = ','
-SUBJECT = r'^\D\D\D?\d?\d?-\D?\d?\d?-\d\d?'
-# works for PH- IHP- and PHI-series files
+# works for PH- and PHI-series files
+PNCSUBJECT = r'^\D\D\D?\d?\d?-\D?\d?\d?-\d\d?'
+# works for IHP-series files
+IHPSUBJECT = r'^\D\D\D\d-\d\d?\d?'
 
 VCLASSES = {1: 'i', 2: 'e', 3: 'ae', 5: 'o', 6: 'uh', 7: 'u', 11: 'iy',
             12: 'iyF', 14: 'iyr', 21: 'ey', 22: 'eyF', 24: 'eyr',
@@ -162,10 +164,13 @@ if __name__ == '__main__':
     # run it
     for fname in args:
         try:
-            subject = match(SUBJECT, path.split(fname)[1]).group(0)
-        # If filename isn't PNC-style, default to subject = filename
+            subject = match(PNCSUBJECT, path.split(fname)[1]).group(0)
         except:
-            subject = path.splitext(path.split(fname)[1])[0]
+            try:
+                subject = match(IHPSUBJECT, path.split(fname)[1]).group(0)
+            # If filename isn't a known PNC style, default to subject = filename
+            except:
+                subject = path.splitext(path.split(fname)[1])[0]
         finally:
             with open(fname, 'rU') as source:
                 plt2csv(source, sink, subject)
