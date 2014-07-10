@@ -51,10 +51,8 @@ from getopt import getopt, GetoptError
 NAN = float('nan')
 USAGE = 'USAGE: {} < PLT > CSV'.format(__file__)
 DELIMITER = ','
-# works for PH- and PHI-series files
-PNCSUBJECT = r'^\D\D\D?\d?\d?-\D?\d?\d?-\d\d?'
-# works for IHP-series files
-IHPSUBJECT = r'^\D\D\D\d-\d\d?\d?'
+# works for PH- IHP- and PHI-series files
+PNCSUBJECT = r'^\D\D\D?\d?\d?-\D?\d?\d?(-\d\d?)?'
 
 VCLASSES = {1: 'i', 2: 'e', 3: 'ae', 5: 'o', 6: 'uh', 7: 'u', 11: 'iy',
             12: 'iyF', 14: 'iyr', 21: 'ey', 22: 'eyF', 24: 'eyr',
@@ -62,23 +60,23 @@ VCLASSES = {1: 'i', 2: 'e', 3: 'ae', 5: 'o', 6: 'uh', 7: 'u', 11: 'iy',
             47: 'ay0', 53: 'oh', 54: 'ohr', 61: 'oy', 62: 'ow', 63: 'owF',
             64: 'owr', 72: 'uw', 73: 'Tuw', 74: 'uwr', 82: 'iw', 94: '*hr'}
 MANNERS = {0: '<n.a.>', 1: 'stop', 2: 'affricate', 3: 'fricative',
-           4: 'nasal', 5: 'lateral', 6: 'rhotic'}
+           4: 'nasal', 5: 'lateral', 6: 'rhotic', 10: 'FAVE.BUG'}
 # changed: "central" (huh?) to "rhotic" --KBG
 PLACES = {0: '<n.a.>', 1: 'labial', 2: 'labiodental', 3: 'interdental',
-          4: 'alveolar', 5: 'alveopalatal', 6: 'velar'}
+          4: 'alveolar', 5: 'alveopalatal', 6: 'velar', 10: 'FAVE.BUG'}
 # changed: "apical" to "aveolar" (this isn't Belfast) and "palatal" to
 # "alveopalatal" (this isn't Beijing) --KBG
-VOICES = {0: '<n.a.>', 1: 'voiceless', 2: 'voiced'}
+VOICES = {0: '<n.a.>', 1: 'voiceless', 2: 'voiced', 10: 'FAVE.BUG'}
 PRE_SEGS = {0: '<n.a.>', 1: 'oral labial', 2: 'm', 3: 'oral alveolar',
             4: 'n', 5: 'alveopalatal', 6: 'velar', 7: 'liquid',
-            8: 'obstruent-liquid', 9: 'glide'}
+            8: 'obstruent-liquid', 9: 'glide', 10: 'FAVE.BUG'}
 # changed: "nasal labial" to "m" (it's the only one), "apical" to "oral
 # alveolar" (as [n] is not included), "nasal apical" to "n" (it's the only
 # one), "palatal" to "alveopalatal" (that's what it is), "obstruent liquid"
 # to "obstruent-liquid" (to make it clear that's a sequence we're talking
 # about), and "w/y" to "glide" --KBG
 FOL_SEQS = {0: '<n.a.>', 1: '1.fol.syl', 2: '2.fol.syl', 3: 'complex',
-            4: '1.fol.syl.complex', 5: '2.fol.syl.complex'}
+            4: '1.fol.syl.complex', 5: '2.fol.syl.complex', 10: 'FAVE.BUG'}
 # changed: simplified the format overall here, should be transparent
 
 
@@ -125,7 +123,10 @@ def plt2csv(source, sink, subject):
         # same for vowel class and environmental coding
         (vc, ec) = ve.split('.', 2)
         row['VClass'] = VCLASSES[int(vc)]
-        (m, pl, v, ps, f) = (int(i) for i in ec)  # decompose that sucker
+        try:
+            (m, pl, v, ps, f) = (int(i) for i in ec)  # decompose that sucker
+        except ValueError:
+            m = pl = v = ps = f = 10 # bug in FAVE pll output, missing codes
         row['Manner'] = MANNERS[m]
         row['Place'] = PLACES[pl] if pl in PLACES else NAN
         row['Voice'] = VOICES[v]
@@ -165,12 +166,9 @@ if __name__ == '__main__':
     for fname in args:
         try:
             subject = match(PNCSUBJECT, path.split(fname)[1]).group(0)
+        # If filename isn't a known PNC style, default to subject = filename
         except:
-            try:
-                subject = match(IHPSUBJECT, path.split(fname)[1]).group(0)
-            # If filename isn't a known PNC style, default to subject = filename
-            except:
-                subject = path.splitext(path.split(fname)[1])[0]
+            subject = path.splitext(path.split(fname)[1])[0]
         finally:
             with open(fname, 'rU') as source:
                 plt2csv(source, sink, subject)
