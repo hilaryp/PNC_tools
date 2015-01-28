@@ -80,25 +80,27 @@ FOL_SEQS = {0: '<n.a.>', 1: '1.fol.syl', 2: '2.fol.syl', 3: 'complex',
 # changed: simplified the format overall here, should be transparent
 
 
-def plt2csv(source, sink, subject):
+def plt2csv(source, sink, subject, demographics):
     """
     Parse an individual Plotnik file handle (stream) and print tokens to an
     csv.DictWriter (sink) according to a specification provided by HEP.
     I don't bother with float or integer conversion except when it matters
     """
-    # first line of header
+    # first line of header contains the speaker demographics
     (s, a, x, e, c, n, y) = source.readline().rstrip().split(DELIMITER)
     
     row = {'Subject': subject, 'Speaker': s.strip()}
 
     if demographics:
-        row = {'Subject': subject, 'Speaker': s.strip(), 'Age': a, 'Sex': x, 
-               'Ethnicity': e, 'Schooling': c if c != '' else NAN, 
-               'Neighborhood': n, 'Year': y}
+        row.update({'Age': a, 'Sex': x, 'Ethnicity': e, 'Schooling': c if 
+                    c != '' else NAN, 'Neighborhood': n, 'Year': y})
 
-    # tells us where "summary" begins
+    # tells us where "summary" begins because the second line of plotnik
+    # files is the number of vowel tokens extracted, aka number of rows
+    # excluding the vowel summary at the end
     n_rows = int(source.readline().split(',')[0])
-    for (i, line) in enumerate(islice(source, 0, n_rows)):
+
+    for line in islice(source, 0, n_rows):
         (F1, F2, F3, ve, sd, wp) = line.rstrip().split(DELIMITER, 5)[:6]
         row['F1'] = F1
         row['F2'] = F2
@@ -171,4 +173,4 @@ if __name__ == '__main__':
             subject = path.splitext(path.split(fname)[1])[0]
         finally:
             with open(fname, 'rU') as source:
-                plt2csv(source, sink, subject)
+                plt2csv(source, sink, subject, demographics)
